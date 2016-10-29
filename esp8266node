@@ -17,7 +17,8 @@ const char* ssid     = "networkname";
 const char* password = "password";
 
 // PubSub (MQTT)
-const char* mqtt_server = "infvoplein.nl";
+const char* mqttServer = "infvoplein.nl";
+const int mqttPort = 1883;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -135,7 +136,7 @@ void setup() {
   // MQTT init:
   sensorTopic = "node/" + nodeID + "/sensors";
   actuatorTopic = "node/" + nodeID + "/actuators";
-  client.setServer(mqtt_server, 1883);
+  client.setServer(mqttServer, mqttPort);
   client.setCallback(mqttCallback);
 }
 
