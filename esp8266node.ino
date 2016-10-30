@@ -37,7 +37,7 @@ void sensor0Publish() {
   JsonObject& root = jsonBuffer.createObject();
   String msg;
   root["id"] = nodeID;
-  root["sensor0"] = 1;
+  root["sensor0"] = digitalRead(button0);
   root["localtime"] = millis();
   root.printTo(msg);
   Serial.println(msg);
