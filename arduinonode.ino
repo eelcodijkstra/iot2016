@@ -1,29 +1,29 @@
 /*
- * test a combination of JSON, MQTT over ESP8266-WiFi
+ * test a combination of JSON, MQTT over Arduino-Ethernet
  * simple sensor: button
  * simple actuator: LED
  */
 
-#include <ESP8266WiFi.h>
+#include <Ethernet.h>
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 
 // i/o pin map
-const int led0 = D5;
-const int button0 = D4;
+const int led0 = 5;
+const int button0 = 2;
+// analog sensor on A0
 
-// WiFi
-const char* ssid     = "networkname";
-const char* password = "password";
-unsigned char mac[6];
-WiFiClient espClient;
+// Ethernet: define MAC address of Ethernet shield
+// Newer Ethernet shields have a MAC address printed on a sticker on the shield
+byte mac[] = {0x90, 0xA2, 0xDA, 0x00, 0x4D, 0x61};
+EthernetClient ethClient;
 
 // PubSub (MQTT)
 const char* mqttServer = "mqttbroker";
 // alternative: IPAddress mqttServer(172, 16, 0, 2);
 const int mqttPort = 1883;
 
-PubSubClient client(espClient);
+PubSubClient client(ethClient);
 
 String nodeID;
 String sensorTopic;
@@ -59,30 +59,19 @@ void sensor1Publish() {
 }
 
 void networkSetup() {
-  digitalWrite(BUILTIN_LED, LOW); // active low: LED ON
-  delay(100);
-  Serial.println();
-  Serial.print("Connecting to ");
-  Serial.print(ssid);
-
-  WiFi.begin(ssid, password);
-  
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
+  if (Ethernet.begin(mac) == 0) {
+    Serial.println("Failed to configure Ethernet using DHCP");
+    // no point in carrying on, so do nothing forevermore:
+    for (;;)
+      ;
+  }
+  // print your local IP address:
+  Serial.print("My IP address: ");
+  for (byte thisByte = 0; thisByte < 4; thisByte++) {
+    Serial.print(Ethernet.localIP()[thisByte], DEC);
     Serial.print(".");
   }
- 
   Serial.println();
-  Serial.print("WiFi connected, IP address: ");  
-  Serial.println(WiFi.localIP());
-  WiFi.macAddress(mac);
-  Serial.print("MAC address: ");
-  for (int i = 0; i < 6; i++) {
-    Serial.print(mac[i], HEX);
-  }
-  Serial.println();
-
-  digitalWrite(BUILTIN_LED, HIGH); // LED off
 }
 
 void mqttCallback(char* topic, byte* payload, unsigned int length) {
@@ -126,11 +115,11 @@ void reconnect() {
 }
 
 void setup() {
-  pinMode(BUILTIN_LED, OUTPUT);     // Initialize the BUILTIN_LED pin as an output
   pinMode(led0, OUTPUT);
   pinMode(button0, INPUT);
-  Serial.begin(115200);
-  
+  analogReference(INTERNAL); //1.1V
+  Serial.begin(9600);
+
   networkSetup();
   nodeID = String(mac[4], HEX) + String(mac[5], HEX);
   // MQTT init:
