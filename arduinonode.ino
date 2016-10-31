@@ -67,11 +67,7 @@ void networkSetup() {
   }
   // print your local IP address:
   Serial.print("My IP address: ");
-  for (byte thisByte = 0; thisByte < 4; thisByte++) {
-    Serial.print(Ethernet.localIP()[thisByte], DEC);
-    Serial.print(".");
-  }
-  Serial.println();
+  Serial.println(Ethernet.localIP());
 }
 
 void mqttCallback(char* topic, byte* payload, unsigned int length) {
@@ -121,7 +117,7 @@ void setup() {
   Serial.begin(9600);
 
   networkSetup();
-  nodeID = String(mac[4], HEX) + String(mac[5], HEX);
+  nodeID = String(mac[4] * 256 + mac[5], HEX);
   // MQTT init:
   sensorTopic = "node/" + nodeID + "/sensors";
   actuatorTopic = "node/" + nodeID + "/actuators";
