@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sensor data</title>
+  </head>
+  <body>
+    <h1>Buttons</h1>
+    <input type="button" id="onbutton">On</input>
+    <input type="button" id="offbutton">Off</input>
+    - Node:
+    <input type="textfield" id="nodeid" value="e1bd">
+           
+    <h1>Sensor data</h1>
+    <textarea rows="10" cols="80" id="msgtext"></textarea>
+    <div id="messages"></div>
+        
+    <script>
+      var connection = null;
+           
+      function connect () {
+        console.log("(re)connecting...");
+        connection = new WebSocket('wss://myserver.org/ws/sensorscontrol');
+               
+        // When the connection is open, send some data to the server
+        connection.onopen = function () {
+          connection.send('{"ping": 1, "topic": "ping"}');
+        };
+           
+        // Log errors
+        connection.onerror = function (error) {
+          console.log('WebSocket Error ' + error);
+        };
+
+        // Log messages from the server
+        connection.onmessage = function (e) {
+          var msg = document.getElementById("msgtext");
+          msg.value = msg.value + "\n" + e.data;
+        };
+      }
+           
+      function checkConnection() {
+        if (connection !== null && connection.readyState == 3) {
+          connect();  
+        }
+      }
+
+      connect();
+      setInterval(checkConnection, 60000);
+
+      document.getElementById("onbutton").onclick = function () {
+        var nodeid = document.getElementById("nodeid").value;
+        var topic = 'node/' + nodeid +  '/actuators';
+        connection.send('{"led0": 1, "topic": "' + topic + '"}');
+      };
+               
+      document.getElementById("offbutton").onclick = function () {
+        var nodeid = document.getElementById("nodeid").value;
+        var topic = 'node/' + nodeid +  '/actuators';
+        connection.send('{"led0": 0, "topic": "' + topic + '"}');
+      };  
+    </script>
+  </body>
+</html>
