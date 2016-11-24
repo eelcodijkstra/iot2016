@@ -4,6 +4,7 @@
  * simple actuator: LED
  */
 
+#include <SPI.h>
 #include <Ethernet.h>
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
