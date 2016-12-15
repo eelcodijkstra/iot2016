@@ -55,6 +55,7 @@ void sensor1Publish() {
   String msg;
   root["id"] = nodeID;
   root["sensor0"] = analogRead(A0);
+  delay(1);
   root["sensor1"] = analogRead(A1);
   root["localtime"] = millis();
   root.printTo(msg);
