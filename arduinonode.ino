@@ -12,6 +12,7 @@
 // i/o pin map
 const int led0 = 5;
 const int button0 = 2;
+const int button1 = 3;
 // analog sensor on A0
 
 // Ethernet: define MAC address of Ethernet shield
@@ -41,6 +42,7 @@ void sensor0Publish() {
   String msg;
   root["id"] = nodeID;
   root["button0"] = digitalRead(button0);
+  root["button1"] = digitalRead(button1);
   root["localtime"] = millis();
   root.printTo(msg);
   Serial.println(msg);
@@ -115,7 +117,7 @@ void reconnect() {
 void setup() {
   pinMode(led0, OUTPUT);
   pinMode(button0, INPUT);
-  analogReference(INTERNAL); //1.1V
+  //analogReference(INTERNAL); //1.1V
   Serial.begin(9600);
 
   networkSetup();
