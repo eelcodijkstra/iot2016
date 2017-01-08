@@ -19,7 +19,7 @@ unsigned char mac[6];
 WiFiClient espClient;
 
 // PubSub (MQTT)
-const char* mqttServer = "mqttbroker";
+const char* mqttServer = "mqttbroker.com";
 // alternative: IPAddress mqttServer(172, 16, 0, 2);
 const int mqttPort = 1883;
 
