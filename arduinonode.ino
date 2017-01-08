@@ -21,7 +21,7 @@ byte mac[] = {0x90, 0xA2, 0xDA, 0x00, 0x4D, 0x61};
 EthernetClient ethClient;
 
 // PubSub (MQTT)
-const char* mqttServer = "mqttbroker";
+const char* mqttServer = "mqttbroker.com";
 // alternative: IPAddress mqttServer(172, 16, 0, 2);
 const int mqttPort = 1883;
 
